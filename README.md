@@ -8,15 +8,18 @@ Use JQ to show how to write the lazyload method
 Use Vue2 (the newest version) 
 
 @first
+
   window.onload =function(){
   vm.begin()
   }
   
 @second
+
  mounted
  window.addEventListener('scroll', this.begin) 
  
 @last 
+
   ref  is a good method for u to control the dom elements ,
   Especially u have to combine the method v-for and ref 
 
@@ -32,7 +35,9 @@ Use Vue2 (the newest version)
           @vm.$refs.load[index].offsetTop;
           
 #index3.html  index5.html
+
  description:
+ 
  when use  different and lower version in Vue you will face some problems
  
  @index3.html  vue 1.0.26 ( two methods to control the dom
