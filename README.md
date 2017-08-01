@@ -29,7 +29,8 @@ Use Vue2 (the newest version)
  description:
  when use  different and lower version in Vue you will face some problems
  
- @index3.html  vue 1.0.26 ( two methods to control the dom)
+ @index3.html  vue 1.0.26 ( two methods to control the dom
+    
     @first method
     ========================vm.lists[index].haha=====================
     
