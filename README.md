@@ -25,16 +25,14 @@ Use Vue2 (the newest version)
           @vm.$refs.load[index].style.color='red'
           @vm.$refs.load[index].offsetTop;
           
-          
-...............................................................
 #index3.html  index5.html
  description:
  when use  different and lower version in Vue you will face some problems
+ 
  @index3.html  vue 1.0.26 ( two methods to control the dom)
     @first method
-    ========================vm.lists[index].haha================================
+    ========================vm.lists[index].haha======================
     @second method
-    ============vm.$refs.lists[index].$el.offsetTop==================     
+    ============vm.$refs.lists[index].$el.offsetTop===================     
  @index5.html  vue 1.0.7 (only one method to control the dom)
      ============vm.$refs.lists[index].$el.offsetTop==================
-.................................................................
