@@ -31,7 +31,8 @@ Use Vue2 (the newest version)
  
  @index3.html  vue 1.0.26 ( two methods to control the dom)
     @first method
-    ========================vm.lists[index].haha======================
+    ========================vm.lists[index].haha=====================
+    
     @second method
     ============vm.$refs.lists[index].$el.offsetTop===================     
  @index5.html  vue 1.0.7 (only one method to control the dom)
