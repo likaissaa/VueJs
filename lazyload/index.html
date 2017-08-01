@@ -1,0 +1,169 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="utf-8" />
+		<title>Js-懒加载</title>
+		<link rel="stylesheet" href="css/base.css" />
+		<script type="text/javascript" src="js/jquery-1.11.3.min.js" ></script>
+		<script type="text/javascript" src="js/vue.js" ></script>
+		<style type="text/css">
+		* {
+			padding: 0;
+			margin: 0;
+			text-decoration: none;
+			list-style: none;
+		}
+		.layout {
+			margin: 0 auto;
+			width: 1000px;
+		}
+		.lazyload img {
+			width: 300px;
+			height: 400px;
+		}
+		.img-ct {
+			margin-left: -50px;
+			overflow: auto;
+		}
+		.item {
+			float: left;
+			margin-left: 50px;
+			margin-bottom: 30px;
+		}
+		ul li{border:1px solid red;}
+	</style>
+	</head>
+	<body>
+		<div id="app">
+			<!--
+			<div style="height:2000px;border:1px solid red;">
+				<div  id="haha" style="position:fixed;bottom:0px;left:0;background: red;" v-on:click="test">123</div>
+				<div class="bgred ht30" style="margin-top:100px;" id="fuck">121</div>
+			</div>-->
+			<div class="lazyload">
+			<div class="layout">
+				<ul class="img-ct">
+					<li class="item">
+						<a href="javascript:void(0)"><img data-img="img/Tsingtao.jpeg" src="" style="background-color:red"></a>
+					</li>
+					<li class="item">
+						<a href="javascript:void(0)"><img data-img="img/Tsingtao.jpeg" src=""style="background-color:red"></a>
+					</li>
+					<li class="item">
+						<a href="javascript:void(0)"><img data-img="img/Tsingtao.jpeg" src=""style="background-color:red"></a>
+					</li>
+					<li class="item">
+						<a href="javascript:void(0)"><img data-img="img/Tsingtao.jpeg" src=""style="background-color:red"></a>
+					</li>
+					<li class="item">
+						<a href="javascript:void(0)"><img data-img="img/Tsingtao.jpeg" src=""style="background-color:red"></a>
+					</li>
+					<li class="item">
+						<a href="javascript:void(0)"><img data-img="img/Tsingtao.jpeg" src=""style="background-color:red"></a>
+					</li>
+					<li class="item">
+						<a href="javascript:void(0)"><img data-img="img/Tsingtao.jpeg" src=""style="background-color:red"></a>
+					</li>
+					<li class="item">
+						<a href="javascript:void(0)"><img data-img="img/Tsingtao.jpeg" src=""style="background-color:red"></a>
+					</li>
+					<li class="item">
+						<a href="javascript:void(0)"><img data-img="img/Tsingtao.jpeg" src=""style="background-color:red"></a>
+					</li>
+					<li class="item">
+						<a href="javascript:void(0)"><img data-img="img/Tsingtao.jpeg" src=""style="background-color:red"></a>
+					</li>
+					<li class="item">
+						<a href="javascript:void(0)"><img data-img="img/Tsingtao.jpeg" src=""style="background-color:red"></a>
+					</li>
+					<li class="item">
+						<a href="javascript:void(0)"><img data-img="img/Tsingtao.jpeg" src=""style="background-color:red"></a>
+					</li>
+					<li class="item">
+						<a href="javascript:void(0)"><img data-img="img/Tsingtao.jpeg" src=""style="background-color:red"></a>
+					</li>
+					<li class="item">
+						<a href="javascript:void(0)"><img data-img="img/Tsingtao.jpeg" src=""style="background-color:red"></a>
+					</li>
+				</ul>
+			  </div>
+		  </div>
+		</div>
+		
+		<script>
+		/*var vm= new Vue({
+			el:'#app',
+			data:{
+				
+			},
+			methods:{
+				test:function(){
+					alert($(window).scrollTop());
+					alert($(window).height())
+					alert($("#haha").offset().top);
+				}
+			}
+		})*/
+		    /**
+		     * jq 方法-懒加载
+		     */
+			var lazyLoad = (function (){
+				var clock;
+				/**
+				 * 初始化方法
+				 */
+				function init(){
+					$(window).on("scroll",function(){
+						if(clock) {
+							clearTimeout(clock);
+						}
+						clock =setTimeout(function(){
+							checkShow();
+						},200)
+					})
+					checkShow();
+				}
+				
+				function checkShow(){
+					$(".lazyload img").each(function(i){
+						
+						var $cur= $(this);
+						
+						if($cur.attr('isLoaded')){
+						return;
+						}
+						if(shouldShow($cur)){
+							console.log("索引="+i);
+							showImg($cur);
+						}
+					})
+				}
+				
+				function shouldShow($node){
+					var scrollH=$(window).scrollTop();
+					var winH=$(window).height();
+					var top =$node.offset().top;
+				/*	console.log("滚动高度="+scrollH)
+					console.log("窗口高度="+winH)
+					console.log("文档高度="+top)*/
+					if(top < winH +scrollH){
+						return true
+					}else{
+						return false
+					}
+				}
+				
+				function showImg($node){
+					$node.attr('src', $node.attr('data-img'));
+					$node.attr('isLoaded',true);
+				}
+				
+				
+				return {
+					init:init
+				}
+			})()
+			lazyLoad.init();
+		</script>
+	</body>
+</html>

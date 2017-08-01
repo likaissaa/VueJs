@@ -1,0 +1,169 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="utf-8" />
+		<title>Vue1.0.7-懒加载</title>
+		<link rel="stylesheet" href="css/base.css" />
+		<script type="text/javascript" src="js/jquery-1.11.3.min.js" ></script>
+		<script type="text/javascript" src="js/vue.js" ></script>
+		<style type="text/css">
+		* {
+			padding: 0;
+			margin: 0;
+			text-decoration: none;
+			list-style: none;
+		}
+		.layout {
+			margin: 0 auto;
+			width: 1000px;
+		}
+		.lazyload img {
+			width: 300px;
+			height: 400px;
+		}
+		.img-ct {
+			margin-left: -50px;
+			overflow: auto;
+		}
+		.item {
+			float: left;
+			margin-left: 50px;
+			margin-bottom: 30px;
+		}
+		ul li{border:1px solid red;}
+	</style>
+	</head>
+	<body>
+		<div id="app">
+			<div class="ht30 bgred" v-on:click="test">1231</div>
+			<!--初步确定v-el 只能用于 普通的标签 不能用于循环-->
+			<div v-el:haha>我是文本</div>
+			<div class="lazyload">
+			<div class="layout">
+				<ul class="img-ct">
+					<li class="item" v-for="list in lists" >
+						<!--当前vue 版本 建议使用 自定义指令-->
+						<a href="javascript:void(0)"><img v-dom.haha="list"   v-bind:isLoaded="list.isLoaded" v-bind:data-img="list.dataimg" v-bind:src="list.myimg">234234</a>
+					</li>
+				</ul>
+			  </div>
+		 	</div>
+		</div>
+	<script>
+	    /**
+	     * value :绑定的dom对象 以及 其属性
+	     * el:绑定的元素
+	     * JSON.stringify(this.modifiers)
+	     */
+	    Vue.directive('dom',function(value){
+	    	console.log(value)
+	    	console.log(this.el.offsetTop)
+			var obj = value;
+			if(obj!=null){
+				// 如果发现没有修饰符  那么 key =el  如果有修饰符 v-dom.haha="list" 哈哈就是修饰符
+				var key=Object.keys(this.modifiers)[0]||"el";
+				/**
+				 * obj 对象
+				 * key 键值
+				 * value 实际值
+				 */
+				Vue.set(obj,key,this.el.offsetTop)
+				
+			}
+});
+		var vm= new Vue({
+			el:'#app',
+			data:{
+				message:'wocao',
+				lists:[],
+				elements:[],
+				tealists:[{text:'123'},{text:'456'}]
+			},
+			methods:{
+				test:function(){
+					sessionStorage.setItem("cacheteacherlist", JSON.stringify(vm.$data));
+					var timestamp = Date.parse(new Date());
+					window.location.href = "index4.html?r="+timestamp
+				},
+				/**
+				 * 定时器循环调用checkshow 方法
+				 */
+				begin:function(){
+					var clock;
+					  if(clock) {
+							clearTimeout(clock);
+						}
+						clock =setTimeout(function(){
+							vm.checkShow();
+						},200)
+					
+				},
+				/**
+				 * 获取当前元素的标签，如果为isLoaded=true停止 如果不是 判断 当前是否应该展示（是否在可shi窗口内）,  在的话将他的属性和另一个属性替换
+				 */
+				checkShow:function(){
+					for(var m=0;m<vm.lists.length;m++){
+						if(vm.lists[m].isLoaded){
+							continue;
+						}
+						if(vm.shouldShow(m))
+						{
+							vm.showimg(m)
+						}
+					}
+				},
+				/**
+				 * 当前方法 进行 data-img 属性和src 属性值的替换
+				 * @param {Object} i 循环图片
+				 */
+				showimg:function(i){
+					vm.lists[i].myimg=vm.lists[i].dataimg
+					vm.lists[i].isLoaded=true
+				},
+				/**
+				 * 当前方法  是否图片出现在可见区域
+				 * scrollH 滚动高度
+				 * winH 当前窗口高度
+				 * top  当前元素距离文档的高度
+				 * top <winH+ scrollH 图片在可见区域内
+				 * @param {Object} index
+				 */
+				shouldShow:function(index){
+					var scrollH=$(window).scrollTop();
+					var winH=$(window).height();
+					/*console.log(this.$els.load)*/
+					var top =vm.lists[index].haha
+					console.log("top===================="+top)
+					if(top< winH+scrollH){
+						console.log("满足条件的索引="+index+"滚动距离="+scrollH+"高度="+winH+"top="+top)
+						return true
+					}
+					else{
+						return false
+					}
+				}
+			},
+			/**
+			 * 当前为mouted钩子函数，ready 之前 可以进行获取ajax 操作 ,调用begin 方法需要用this-------------加深理解
+			 */
+			ready:function(){
+/*				this.tealists[0].haipa.style.color='red'
+				console.log(this.tealists[0].haipa.offsetTop)*/
+				window.addEventListener('scroll', this.begin)
+				for(var i=0;i<14;i++){
+				var list={
+					isLoaded:false,
+					dataimg:"img/Tsingtao.jpeg",
+					myimg:"img/blank.jpg",
+				}
+				this.lists.push(list)
+			}
+			},
+		})
+		// 文件加载后执行的方法
+		window.onload =function(){
+			vm.begin();
+		}
+		</script>
+	</body>
+</html>

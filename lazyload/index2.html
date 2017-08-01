@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="utf-8" />
+		<title>Vue2-懒加载</title>
+		<link rel="stylesheet" href="css/base.css" />
+		<script type="text/javascript" src="js/jquery-1.11.3.min.js" ></script>
+		<script type="text/javascript" src="js/vue2.js" ></script>
+		<style type="text/css">
+		* {
+			padding: 0;
+			margin: 0;
+			text-decoration: none;
+			list-style: none;
+		}
+		.layout {
+			margin: 0 auto;
+			width: 1000px;
+		}
+		.lazyload img {
+			width: 300px;
+			height: 400px;
+		}
+		.img-ct {
+			margin-left: -50px;
+			overflow: auto;
+		}
+		.item {
+			float: left;
+			margin-left: 50px;
+			margin-bottom: 30px;
+		}
+		ul li{border:1px solid red;}
+	</style>
+	</head>
+	<body>
+		<div id="app">
+			<div class="ht30 bgred" v-on:click="test">1231</div>
+			<div class="lazyload">
+			<div class="layout">
+				<ul class="img-ct">
+					<li class="item" v-for="list in lists">
+						<a href="javascript:void(0)"><img ref="load" v-bind:isLoaded="list.isLoaded" v-bind:data-img="list.dataimg" v-bind:src="list.myimg">234234</a>
+						
+					</li>
+				</ul>
+			  </div>
+		 	</div>
+		</div>
+	<script>
+		var vm= new Vue({
+			el:'#app',
+			data:{
+				message:'wocao',
+				lists:[]
+			},
+			methods:{
+				/**
+				 * 定时器循环调用checkshow 方法
+				 */
+				test:function(){
+					sessionStorage.setItem("cacheteacherlist", JSON.stringify(vm.$data));
+					var timestamp = Date.parse(new Date());
+					window.location.href = "index4.html?r="+timestamp
+				},
+				begin:function(){
+					var clock;
+					  if(clock) {
+							clearTimeout(clock);
+						}
+						clock =setTimeout(function(){
+							vm.checkShow();
+						},200)
+					
+				},
+				/**
+				 * 获取当前元素的标签，如果为isLoaded=true停止 如果不是 判断 当前是否应该展示（是否在可shi窗口内）,  在的话将他的属性和另一个属性替换
+				 */
+				checkShow:function(){
+					for(var m=0;m<vm.lists.length;m++){
+						if(vm.lists[m].isLoaded){
+							continue;
+						}
+						if(vm.shouldShow(m))
+						{
+							vm.showimg(m)
+						}
+					}
+				},
+				/**
+				 * 当前方法 进行 data-img 属性和src 属性值的替换
+				 * @param {Object} i 循环图片
+				 */
+				showimg:function(i){
+					vm.lists[i].myimg=vm.lists[i].dataimg
+					vm.lists[i].isLoaded=true
+				},
+				/**
+				 * 当前方法  是否图片出现在可见区域
+				 * scrollH 滚动高度
+				 * winH 当前窗口高度
+				 * top  当前元素距离文档的高度
+				 * top <winH+ scrollH 图片在可见区域内
+				 * @param {Object} index
+				 */
+				shouldShow:function(index){
+					
+					var scrollH=$(window).scrollTop();
+					var winH=$(window).height();
+					var top =vm.$refs.load[index].offsetTop;
+					if(top< winH+scrollH){
+						console.log("满足条件的索引="+index+"滚动距离="+scrollH+"高度="+winH+"top="+top)
+						return true
+					}
+					else{
+						return false
+					}
+				}
+			},
+			/**
+			 * 当前为mouted钩子函数，ready 之前 可以进行获取ajax 操作 ,调用begin 方法需要用this-------------加深理解
+			 */
+			mounted:function(){
+				window.addEventListener('scroll', this.begin)
+				for(var i=0;i<14;i++){
+				var list={
+					ref:i,
+					isLoaded:false,
+					dataimg:"img/Tsingtao.jpeg",
+					myimg:"img/blank.jpg",
+				}
+				this.lists.push(list)
+			}
+			},
+		})
+		// 文件加载后执行的方法
+		window.onload =function(){
+			vm.begin();
+		}
+		</script>
+	</body>
+</html>
